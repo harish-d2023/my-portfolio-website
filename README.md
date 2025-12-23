@@ -2,7 +2,7 @@
 
 A professionally designed portfolio website showcasing cybersecurity expertise with **security-first development practices**.
 
-![Portfolio Preview](assets/images/profile1.jpg)
+![Portfolio Preview](assets/images/profile12.jpg)
 
 ---
 

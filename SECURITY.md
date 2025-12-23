@@ -323,7 +323,7 @@ When deploying this website, complete the following:
 - [ ] (Optional) Add server-side security headers
 - [x] (Completed) Implement Subresource Integrity (SRI) hashes
 
-See: [POST_DEPLOYMENT_TASKS.md](POST_DEPLOYMENT_TASKS.md) for detailed instructions.
+
 
 ---
 

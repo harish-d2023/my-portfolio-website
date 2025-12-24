@@ -46,7 +46,7 @@ html {
     width: 100%;
     height: 100vh;
     background-color: #0a0e1a;
-    background-image: url('../assets/kali-linux-1.svg');
+    background-image: url('assets/kali-linux-1.svg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

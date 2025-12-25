@@ -192,30 +192,80 @@ document.addEventListener('DOMContentLoaded', function () {
 const canvas = document.getElementById('matrix-canvas');
 const ctx = canvas.getContext('2d');
 
-// Set canvas size
+// Mobile detection
+const isMobile = window.innerWidth <= 768;
+
+// Set canvas size with DPR-safe logic
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Get actual viewport dimensions
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    // Set display size (CSS pixels)
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+
+    // Set actual size in memory (scaled for DPR)
+    canvas.width = Math.floor(rect.width * dpr);
+    canvas.height = Math.floor(rect.height * dpr);
+
+    // Scale context to match DPR
+    ctx.scale(dpr, dpr);
+
+    // Use CSS pixel dimensions for calculations
+    return {
+        width: rect.width,
+        height: rect.height
+    };
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+
+const dimensions = resizeCanvas();
+
+// Add resize listener to prevent overflow
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const newDimensions = resizeCanvas();
+        // Reinitialize drops array if needed
+        const newColumns = Math.floor(newDimensions.width / fontSize);
+        if (newColumns !== drops.length) {
+            drops.length = newColumns;
+            for (let i = 0; i < newColumns; i++) {
+                if (isMobile && i % 2 === 0) {
+                    drops[i] = -999;
+                } else {
+                    drops[i] = Math.floor(Math.random() * -20);
+                }
+            }
+        }
+    }, 250);
+});
 
 // Matrix characters
 const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?/~';
-const fontSize = 14;
-const columns = canvas.width / fontSize;
+const fontSize = isMobile ? 12 : 14;
+const columns = Math.floor(dimensions.width / fontSize);
 
 // Array to store drop positions - start at top (0) instead of random
 const drops = [];
 for (let i = 0; i < columns; i++) {
-    drops[i] = 0; // Start all drops at the top
+    // On mobile, skip every other column to reduce density
+    if (isMobile && i % 2 === 0) {
+        drops[i] = -999; // Don't render this column
+    } else {
+        drops[i] = 0; // Start all drops at the top
+    }
 }
 
 // Draw matrix rain
 function drawMatrix() {
+    // Use CSS pixel dimensions for drawing
+    const rect = canvas.getBoundingClientRect();
+
     // Semi-transparent black to create fade effect
-    ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = isMobile ? 'rgba(10, 10, 10, 0.08)' : 'rgba(10, 10, 10, 0.05)';
+    ctx.fillRect(0, 0, rect.width, rect.height);
 
     // Set text style
     ctx.fillStyle = '#00ff41';
@@ -223,6 +273,9 @@ function drawMatrix() {
 
     // Draw characters
     for (let i = 0; i < drops.length; i++) {
+        // Skip columns marked as -999 (mobile optimization)
+        if (drops[i] === -999) continue;
+
         const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
         const x = i * fontSize;
         const y = drops[i] * fontSize;
@@ -230,7 +283,7 @@ function drawMatrix() {
         ctx.fillText(char, x, y);
 
         // Reset drop to top randomly
-        if (y > canvas.height && Math.random() > 0.975) {
+        if (y > rect.height && Math.random() > 0.975) {
             drops[i] = 0;
         }
 
@@ -246,9 +299,13 @@ function startMatrixRain() {
     if (!matrixInterval) {
         // Reset all drops to start from top for fresh effect
         for (let i = 0; i < drops.length; i++) {
-            drops[i] = Math.floor(Math.random() * -20); // Slight stagger for natural cascade
+            if (drops[i] !== -999) {
+                drops[i] = Math.floor(Math.random() * -20); // Slight stagger for natural cascade
+            }
         }
-        matrixInterval = setInterval(drawMatrix, 50);
+        // Slower interval on mobile for better performance
+        const interval = isMobile ? 75 : 50;
+        matrixInterval = setInterval(drawMatrix, interval);
     }
 }
 
@@ -272,17 +329,18 @@ const typewriterElement = document.querySelector('.typewriter-text');
 
 function typeWriter() {
     const currentRole = roles[roleIndex];
+    const isMobileDevice = window.innerWidth <= 768;
 
     if (isDeleting) {
         // Delete characters
         typewriterElement.textContent = currentRole.substring(0, charIndex - 1);
         charIndex--;
-        typeSpeed = 50;
+        typeSpeed = isMobileDevice ? 75 : 50;
     } else {
         // Type characters
         typewriterElement.textContent = currentRole.substring(0, charIndex + 1);
         charIndex++;
-        typeSpeed = 100;
+        typeSpeed = isMobileDevice ? 150 : 100;
     }
 
     // Check if word is complete
@@ -565,6 +623,8 @@ class TerminalCommandAnimator {
         const command = commandElement.dataset.command;
         if (!command) return;
 
+        const isMobileDevice = window.innerWidth <= 768;
+
         // Show cursor
         cursorElement.classList.remove('hidden');
 
@@ -574,16 +634,19 @@ class TerminalCommandAnimator {
             currentText += command[i];
             commandElement.textContent = currentText;
 
-            // Random delay between 50-100ms for realistic typing
-            await this.delay(Math.random() * 50 + 50);
+            // Faster typing on mobile to reduce animation time
+            const delay = isMobileDevice ?
+                Math.random() * 30 + 40 :
+                Math.random() * 50 + 50;
+            await this.delay(delay);
         }
 
         // Hide cursor after typing
-        await this.delay(200);
+        await this.delay(isMobileDevice ? 150 : 200);
         cursorElement.classList.add('hidden');
 
         // Execution delay (command processing)
-        await this.delay(400);
+        await this.delay(isMobileDevice ? 300 : 400);
 
         // Reveal content
         contentElement.classList.add('revealed');

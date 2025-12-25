@@ -34,6 +34,8 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 /* ===========================
@@ -66,7 +68,7 @@ html {
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 320px;
+    max-width: min(320px, 90vw);
     padding: 0.5rem;
 }
 
@@ -423,6 +425,8 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
+    max-width: 100vw;
+    position: relative;
 }
 
 .container {
@@ -529,8 +533,9 @@ body {
     border-radius: 8px;
     padding: var(--spacing-md);
     box-shadow: var(--shadow-glow);
-    max-width: 700px;
+    max-width: min(700px, 92vw);
     margin: 0 auto;
+    width: 100%;
 }
 
 .terminal-header {
@@ -1303,6 +1308,14 @@ body {
 @media (max-width: 768px) {
     .hamburger {
         display: flex;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .hamburger .bar {
+        height: 3px;
     }
 
     .nav-menu {
@@ -1316,10 +1329,16 @@ body {
         transition: left 0.3s ease;
         padding: var(--spacing-md);
         border-top: 1px solid var(--border-color);
+        z-index: 999;
     }
 
     .nav-menu.active {
         left: 0;
+    }
+
+    .terminal-window {
+        padding: 1.5rem;
+        max-width: 95vw;
     }
 
     .glitch-text {
@@ -1335,6 +1354,7 @@ body {
         width: 200px;
         height: 200px;
         max-width: 200px;
+        margin: 0 auto;
     }
 
     .typewriter-container {
@@ -1343,10 +1363,19 @@ body {
 
     .cta-buttons {
         flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
     }
 
     .section-header {
         font-size: 1.3rem;
+        padding-left: 0.75rem;
     }
 
     .skills-grid,
@@ -1362,11 +1391,17 @@ body {
     .timeline-marker {
         left: -36px;
     }
+
+    .container {
+        padding: 0 1rem;
+    }
 }
 
 @media (max-width: 480px) {
     .terminal-window {
-        padding: var(--spacing-sm);
+        padding: 1rem;
+        max-width: 95vw;
+        border-width: 1px;
     }
 
     .glitch-text {
@@ -1375,6 +1410,31 @@ body {
 
     .typewriter-container {
         font-size: 1rem;
+        min-height: 2rem;
+    }
+
+    .terminal-line {
+        font-size: 0.85rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 10px 18px;
+        font-size: 0.85rem;
+    }
+
+    .section-header {
+        font-size: 1.1rem;
+    }
+
+    .nav-brand .terminal-prompt {
+        font-size: 1rem;
+    }
+
+    .about-photo {
+        width: 160px;
+        height: 160px;
+        max-width: 160px;
     }
 }
 
@@ -1515,6 +1575,7 @@ body {
     border-radius: 8px;
     padding: var(--spacing-md);
     width: 100%;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -1642,19 +1703,67 @@ body {
     }
 }
 
+@media (max-width: 768px) {
+    .contact-form-container {
+        max-width: 95vw;
+        margin: 0 auto;
+    }
+
+    .contact-card .social-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+}
+
 @media (max-width: 480px) {
 
     .contact-title,
     .form-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .contact-description {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
     .form-submit {
         padding: 12px 20px;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+    }
+
+    .form-input,
+    .form-textarea {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+
+    .contact-card .social-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+
+    .contact-card .social-links {
+        gap: 1rem;
+    }
+}
+
+/* reCAPTCHA Badge Mobile Fix */
+@media (max-width: 480px) {
+    .grecaptcha-badge {
+        bottom: 70px !important;
+    }
+}
+
+/* Critical reCAPTCHA overflow fix for all mobile devices */
+@media (max-width: 768px) {
+    .grecaptcha-badge {
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
     }
 }

@@ -32,8 +32,7 @@ This portfolio implements **production-grade security measures**:
 - ✅ **Console Log Sanitization** - Prevents information disclosure
 - ✅ **Input Validation** - Email format and required field validation
 - ✅ **Secure External Links** - All links use `rel="noopener noreferrer"`
-- ⏳ **EmailJS Domain Restrictions** - Pending deployment
-- ⏳ **reCAPTCHA v3** - Optional bot protection (pending deployment)
+- ✅ **reCAPTCHA v2 (Invisible)** - Bot protection with server-side verification
 
 **See:** [SECURITY.md](SECURITY.md) for complete security documentation.
 
@@ -72,8 +71,8 @@ cybersecurity-portfolio/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/harish-d2023/cybersecurity-portfolio.git
-   cd cybersecurity-portfolio
+   git clone https://github.com/harish-d2023/portfolio.git
+   cd portfolio
    ```
 
 2. **Open in browser**
@@ -96,11 +95,8 @@ cybersecurity-portfolio/
 - Netlify (Free)
 - Vercel (Free)
 
-**After deployment, complete:**
-1. EmailJS domain restrictions
-2. (Optional) reCAPTCHA v3 integration
-
-See: [POST_DEPLOYMENT_TASKS.md](POST_DEPLOYMENT_TASKS.md) for detailed instructions.
+**After deployment, configure:**
+- Add production domain to reCAPTCHA allowed domains in [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin)
 
 ---
 

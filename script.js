@@ -341,22 +341,47 @@ navLinks.forEach(link => {
 });
 
 // ===========================
-// Smooth Scrolling
+// Centralized Section Navigation
 // ===========================
+function navigateToSection(sectionId) {
+    const targetSection = document.querySelector(sectionId);
+    if (!targetSection) return;
+
+    // Smooth scroll to section
+    const offsetTop = targetSection.offsetTop - 70;
+    window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth'
+    });
+
+    // Manually trigger terminal animation for non-home sections
+    if (sectionId !== '#home') {
+        // Wait for scroll to complete, then trigger animation
+        setTimeout(() => {
+            if (window.terminalAnimator) {
+                window.terminalAnimator.handleSectionIntersection(targetSection);
+            }
+        }, 600); // Delay to allow smooth scroll to complete
+    }
+}
+
+// Navbar links handler
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const targetId = link.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-
-        if (targetSection) {
-            const offsetTop = targetSection.offsetTop - 70;
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
-        }
+        navigateToSection(targetId);
     });
+});
+
+// Handle all internal anchor links (including Home CTA button)
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href^="#"]');
+    if (link && !link.classList.contains('nav-link')) {
+        e.preventDefault();
+        const targetId = link.getAttribute('href');
+        navigateToSection(targetId);
+    }
 });
 
 // ===========================
@@ -639,8 +664,8 @@ class TerminalCommandAnimator {
 
 // Initialize terminal command animator on DOM load
 document.addEventListener('DOMContentLoaded', () => {
-    const animator = new TerminalCommandAnimator();
-    animator.observeSections();
+    window.terminalAnimator = new TerminalCommandAnimator();
+    window.terminalAnimator.observeSections();
 });
 
 // ===========================
@@ -684,124 +709,128 @@ document.addEventListener('DOMContentLoaded', () => {
     const formStatus = document.getElementById('form-status');
     const submitButton = contactForm ? contactForm.querySelector('.form-submit') : null;
 
-    if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+    // ===========================
+    // reCAPTCHA v2 Callback Function
+    // ===========================
+    window.onSubmitWithRecaptcha = function (recaptchaToken) {
+        // This function is called automatically when reCAPTCHA verification succeeds
 
-            // Rate limiting check
-            const rateLimitCheck = rateLimiter.canSubmit();
-            if (!rateLimitCheck.allowed) {
-                showFormStatus('error', `[ ERROR ] Too many attempts. Please wait ${rateLimitCheck.remainingTime} seconds.`);
-                return;
-            }
+        // Rate limiting check
+        const rateLimitCheck = rateLimiter.canSubmit();
+        if (!rateLimitCheck.allowed) {
+            showFormStatus('error', `[ ERROR ] Too many attempts. Please wait ${rateLimitCheck.remainingTime} seconds.`);
+            grecaptcha.reset(); // Reset reCAPTCHA for next attempt
+            return;
+        }
 
-            // Input sanitization function
-            function sanitizeInput(input, maxLength = 500) {
-                // Trim whitespace
-                let sanitized = input.trim();
+        // Input sanitization function
+        function sanitizeInput(input, maxLength = 500) {
+            let sanitized = input.trim();
+            sanitized = sanitized.substring(0, maxLength);
+            sanitized = sanitized.replace(/\0/g, '');
+            sanitized = sanitized.normalize('NFC');
+            sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+            return sanitized;
+        }
 
-                // Limit length
-                sanitized = sanitized.substring(0, maxLength);
+        // Get form field values for validation
+        const nameField = document.getElementById('name');
+        const emailField = document.getElementById('email');
+        const messageField = document.getElementById('message');
 
-                // Remove null bytes
-                sanitized = sanitized.replace(/\0/g, '');
+        const name = sanitizeInput(nameField.value, 100);
+        const email = sanitizeInput(emailField.value, 254);
+        const message = sanitizeInput(messageField.value, 2000);
 
-                // Normalize unicode
-                sanitized = sanitized.normalize('NFC');
+        // Basic validation
+        if (!name || !email || !message) {
+            showFormStatus('error', '[ ERROR ] All fields are required!');
+            grecaptcha.reset();
+            return;
+        }
 
-                // Remove control characters except newlines and tabs
-                sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+        // Name length validation
+        if (name.length < 2) {
+            showFormStatus('error', '[ ERROR ] Name must be at least 2 characters!');
+            grecaptcha.reset();
+            return;
+        }
 
-                return sanitized;
-            }
+        // Message length validation
+        if (message.length < 10) {
+            showFormStatus('error', '[ ERROR ] Message must be at least 10 characters!');
+            grecaptcha.reset();
+            return;
+        }
 
-            // Get and sanitize form values
-            const name = sanitizeInput(document.getElementById('name').value, 100);
-            const email = sanitizeInput(document.getElementById('email').value, 254);
-            const message = sanitizeInput(document.getElementById('message').value, 2000);
+        // RFC 5322 compliant email validation
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        if (!emailRegex.test(email)) {
+            showFormStatus('error', '[ ERROR ] Please enter a valid email address!');
+            grecaptcha.reset();
+            return;
+        }
 
-            // Basic validation
-            if (!name || !email || !message) {
-                showFormStatus('error', '[ ERROR ] All fields are required!');
-                return;
-            }
+        // Email length check
+        if (email.length > 254) {
+            showFormStatus('error', '[ ERROR ] Email address is too long!');
+            grecaptcha.reset();
+            return;
+        }
 
-            // Name length validation
-            if (name.length < 2) {
-                showFormStatus('error', '[ ERROR ] Name must be at least 2 characters!');
-                return;
-            }
+        // Check for consecutive dots
+        if (email.includes('..')) {
+            showFormStatus('error', '[ ERROR ] Invalid email format!');
+            grecaptcha.reset();
+            return;
+        }
 
-            // Message length validation
-            if (message.length < 10) {
-                showFormStatus('error', '[ ERROR ] Message must be at least 10 characters!');
-                return;
-            }
+        // Record attempt before sending
+        rateLimiter.recordAttempt();
 
-            // RFC 5322 compliant email validation (simplified)
-            const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-            if (!emailRegex.test(email)) {
-                showFormStatus('error', '[ ERROR ] Please enter a valid email address!');
-                return;
-            }
+        // Show loading state
+        const originalButtonText = submitButton.innerHTML;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> [ SENDING... ]';
+        showFormStatus('info', '[ INFO ] Sending your message...');
 
-            // Email length check
-            if (email.length > 254) {
-                showFormStatus('error', '[ ERROR ] Email address is too long!');
-                return;
-            }
+        // Use emailjs.sendForm() which automatically includes g-recaptcha-response
+        emailjs.sendForm('service_pxf4tgd', 'template_uu29jg9', contactForm)
+            .then(function (response) {
+                // Success
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.log('Form submitted successfully with reCAPTCHA verification');
+                }
+                showFormStatus('success', '[ SUCCESS ] Message sent! I\'ll get back to you soon.');
 
-            // Check for consecutive dots
-            if (email.includes('..')) {
-                showFormStatus('error', '[ ERROR ] Invalid email format!');
-                return;
-            }
-
-            // Record attempt before sending
-            rateLimiter.recordAttempt();
-
-            // Show loading state
-            const originalButtonText = submitButton.innerHTML;
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> [ SENDING... ]';
-            showFormStatus('info', '[ INFO ] Sending your message...');
-
-            // Prepare template parameters
-            const templateParams = {
-                from_name: name,
-                from_email: email,
-                message: message,
-                to_name: 'Harish D'
-            };
-
-            // Send email using EmailJS
-            emailjs.send('service_pxf4tgd', 'template_uu29jg9', templateParams)
-                .then(function (response) {
-                    // Success logged for debugging (remove in production)
-                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                        console.log('Form submitted successfully');
-                    }
-                    showFormStatus('success', '[ SUCCESS ] Message sent! I\'ll get back to you soon.');
-
-                    // Reset form after 3 seconds
-                    setTimeout(() => {
-                        contactForm.reset();
-                        formStatus.className = 'form-status';
-                        formStatus.textContent = '';
-                        submitButton.disabled = false;
-                        submitButton.innerHTML = originalButtonText;
-                    }, 3000);
-                }, function (error) {
-                    // Log error only in development
-                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                        console.error('Form submission failed:', error.message);
-                    }
-                    showFormStatus('error', '[ ERROR ] Failed to send message. Please try again or email me directly.');
+                // Reset form after 3 seconds
+                setTimeout(() => {
+                    contactForm.reset();
+                    formStatus.className = 'form-status';
+                    formStatus.textContent = '';
                     submitButton.disabled = false;
                     submitButton.innerHTML = originalButtonText;
-                });
-        });
-    }
+                    grecaptcha.reset(); // Reset reCAPTCHA for next submission
+                }, 3000);
+            })
+            .catch(function (error) {
+                // Error handling
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.error('Form submission failed:', error);
+                }
+
+                // Check if error is due to reCAPTCHA verification failure
+                if (error.text && error.text.includes('reCAPTCHA')) {
+                    showFormStatus('error', '[ ERROR ] Security verification failed. Please try again.');
+                } else {
+                    showFormStatus('error', '[ ERROR ] Failed to send message. Please try again or email me directly.');
+                }
+
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+                grecaptcha.reset(); // Reset reCAPTCHA for retry
+            });
+    };
 
     function showFormStatus(type, message) {
         formStatus.className = `form-status ${type}`;

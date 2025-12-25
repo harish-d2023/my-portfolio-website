@@ -9,7 +9,7 @@
 
     <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://api.emailjs.com https://www.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://api.emailjs.com https://www.google.com https://www.gstatic.com; frame-src https://www.google.com https://www.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 
     <!-- Clickjacking Protection -->
     <meta http-equiv="X-Frame-Options" content="DENY">
@@ -28,6 +28,9 @@
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Google reCAPTCHA v2 (Invisible) -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -143,30 +146,44 @@
                     <div class="code-block">
                         <span class="comment">// About Me</span><br><br>
                         <p>
-                            I am a passion-driven <strong>Cybersecurity Analyst</strong> and Engineering student with a
-                            dual focus on offensive and defensive security. Currently interning at <strong>Supraja
-                                Technologies</strong>, I bridge the gap between attacking and defending by conducting
-                            comprehensive <strong>Web & API VAPT</strong> to identify vulnerabilities, while
-                            simultaneously monitoring real-time threats using <strong>Splunk</strong> in a SOC
-                            environment.
+                            I'm a <strong>Cyber Security undergraduate</strong> with hands-on experience across SOC
+                            operations, Web & API Vulnerability Assessment & Penetration Testing (VAPT), incident
+                            response, and ethical hacking, actively building my foundation in both defensive and
+                            offensive security.
                         </p>
                         <br>
                         <p>
-                            My technical foundation goes beyond just running tools. I am adept at <strong>Security
-                                Automation</strong>, leveraging Python, Bash, and C to develop custom scripts for threat
-                            detection and log analysis. My academic and project background includes advanced work in
-                            <strong>Network Security, Cryptography, and Blockchain Forensics</strong>.
+                            Through multiple internships and practical training programs, I've worked on real-world
+                            security scenarios — performing Web Application and API VAPT, identifying and exploiting
+                            vulnerabilities such as SQL Injection, XSS, and insecure API configurations, and
+                            recommending remediation aligned with OWASP Top 10 and industry best practices.
                         </p>
                         <br>
                         <p>
-                            Whether it's tracing illicit crypto transactions with <em>ChainPhantom</em> or building
-                            AI-driven Insider Threat Prediction systems, I am committed to solving complex security
-                            challenges through secure software design and ethical hacking.
+                            I have practical exposure to SOC environments, where I performed SIEM monitoring using
+                            Splunk, analyzed security alerts, supported incident detection, triage, escalation, and
+                            assisted with incident response documentation. Alongside this, I bring foundational
+                            knowledge of network security, digital forensics, risk assessment, and security monitoring
+                            workflows.
+                        </p>
+                        <br>
+                        <p>
+                            My technical skill set includes Splunk SIEM, Web & API Security Testing, VAPT, Linux,
+                            ethical hacking methodologies, and security reporting. In parallel, my role as PR Team Lead
+                            at OSCode SaIT Chapter has strengthened my communication, collaboration, and stakeholder
+                            coordination skills.
+                        </p>
+                        <br>
+                        <p>
+                            I'm driven by continuous learning and enjoy staying updated with evolving cyber threats,
+                            with the goal of contributing to securing systems, applications, and data in real-world
+                            environments.
                         </p>
 
                         <div class="terminal-specs"
                             style="margin-top: 20px; font-family: monospace; color: #00ff41; opacity: 0.8;">
-                            <span>> Current_Focus: ["Red Teaming", "SOC Operations", "AI Security"]</span><br>
+                            <span>> Current_Focus: ["SOC Operations", "Red Teaming", "Incident Response" , "AI
+                                Security"]</span><br>
                             <span>> Location: Bengaluru, India</span><br>
                             <span>> Status: Open for Opportunities</span>
                         </div>
@@ -245,50 +262,99 @@
                 <span class="terminal-cursor">|</span>
             </h2>
             <div class="timeline section-content">
+                <!-- Experience 1: Supraja Technologies - Advanced Cyber Security Intern -->
                 <div class="timeline-item">
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <div class="timeline-header">
-                            <h3 class="role-title">Cybersecurity Intern</h3>
+                            <h3 class="role-title">Advanced Cyber Security Intern</h3>
                             <span class="company">@ <a href="https://suprajatechnologies.com/" target="_blank"
                                     rel="noopener noreferrer" class="company-link">Supraja Technologies</a></span>
                         </div>
-                        <p class="duration">Sep 2024 – Dec 2024 | Sep 2025 – Present</p>
+                        <p class="duration">September 2025 – Present</p>
                         <ul class="task-list">
-                            <li><span class="bullet">></span> Conducted Web Application & API VAPT to identify flaws.
-                            </li>
-                            <li><span class="bullet">></span> Practiced incident response and developed automation
-                                scripts for log analysis.</li>
-                            <li><span class="bullet">></span> Utilized Splunk for real-time SOC monitoring and threat
-                                escalation.</li>
+                            <li><span class="bullet">></span> Performed Web Application & API Vulnerability Assessment
+                                and Penetration Testing (VAPT) on multiple applications, identifying high and
+                                medium-risk vulnerabilities and recommending remediation aligned with security best
+                                practices.</li>
+                            <li><span class="bullet">></span> Assessed API security controls including authentication,
+                                authorization, input validation, and endpoint security, helping reduce potential attack
+                                surfaces.</li>
+                            <li><span class="bullet">></span> Monitored and analyzed real-time security alerts using
+                                Splunk SIEM, supporting incident detection, triage, and escalation in a SOC-like
+                                environment.</li>
+                            <li><span class="bullet">></span> Assisted in incident response workflows, including alert
+                                analysis, threat validation, and documentation.</li>
+                            <li><span class="bullet">></span> Strengthened understanding of OWASP Top 10, SOC
+                                operations, and security reporting.</li>
                         </ul>
                     </div>
                 </div>
 
+                <!-- Experience 2: Supraja Technologies - Cyber Security Intern -->
                 <div class="timeline-item">
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <div class="timeline-header">
-                            <h3 class="role-title">Cybersecurity Intern</h3>
-                            <span class="company">@ <a href="https://humaninitials.com/" target="_blank"
-                                    rel="noopener noreferrer" class="company-link">Human Initials</a></span>
+                            <h3 class="role-title">Cyber Security Intern – Web Application VAPT</h3>
+                            <span class="company">@ <a href="https://suprajatechnologies.com/" target="_blank"
+                                    rel="noopener noreferrer" class="company-link">Supraja Technologies</a></span>
                         </div>
-                        <p class="duration">Oct 2025 – Dec 2025 (60 Days)</p>
+                        <p class="duration">September 2024 – December 2024</p>
                         <ul class="task-list">
-                            <li><span class="bullet">></span> Successfully completed an intensive Cybersecurity
-                                Internship Program with hands-on, industry-oriented training.</li>
+                            <li><span class="bullet">></span> Identified and exploited common web application
+                                vulnerabilities including SQL Injection, XSS, and input validation flaws.</li>
+                            <li><span class="bullet">></span> Used industry-standard tools for vulnerability scanning,
+                                penetration testing, and structured security reporting.</li>
+                            <li><span class="bullet">></span> Contributed to actionable remediation recommendations and
+                                improved application security posture.</li>
+                            <li><span class="bullet">></span> Collaborated with team members to support successful
+                                security assessments.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Experience 3: HUMAN INITIALS - Cyber Security Intern -->
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <h3 class="role-title">Cyber Security Intern</h3>
+                            <span class="company">@ <a href="https://humaninitials.com/" target="_blank"
+                                    rel="noopener noreferrer" class="company-link">HUMAN INITIALS</a></span>
+                        </div>
+                        <p class="duration">October 2025 – December 2025 | Remote</p>
+                        <ul class="task-list">
+                            <li><span class="bullet">></span> Completed an industry-oriented cybersecurity internship
+                                with hands-on labs and real-world scenarios.</li>
                             <li><span class="bullet">></span> Gained practical exposure to network security fundamentals
-                                and real-world security practices.</li>
-                            <li><span class="bullet">></span> Applied ethical hacking methodologies to identify
+                                and secure system design.</li>
+                            <li><span class="bullet">></span> Applied ethical hacking techniques to identify
                                 vulnerabilities in systems and applications.</li>
-                            <li><span class="bullet">></span> Performed penetration testing (VAPT) to assess and
-                                strengthen security posture.</li>
-                            <li><span class="bullet">></span> Worked on incident response workflows, including
-                                detection, analysis, and mitigation of security threats.</li>
-                            <li><span class="bullet">></span> Developed understanding of cyber forensics, focusing on
-                                investigation and evidence handling after security incidents.</li>
-                            <li><span class="bullet">></span> Adhered to professional standards and best practices
-                                aligned with modern cybersecurity industry benchmarks.</li>
+                            <li><span class="bullet">></span> Participated in incident response workflows, including
+                                detection, analysis, mitigation, and reporting.</li>
+                            <li><span class="bullet">></span> Developed foundational knowledge of digital forensics,
+                                focusing on investigation and evidence handling.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Experience 4: OSCode SaIT Chapter - PR Team Lead -->
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <h3 class="role-title">PR Team Lead</h3>
+                            <span class="company">@ OSCode SaIT Chapter</span>
+                        </div>
+                        <p class="duration">August 2025 – Present | Bengaluru, India</p>
+                        <ul class="task-list">
+                            <li><span class="bullet">></span> Led communication and outreach initiatives, improving
+                                community engagement and organizational visibility.</li>
+                            <li><span class="bullet">></span> Coordinated with cross-functional teams to plan events,
+                                campaigns, and technical sessions.</li>
+                            <li><span class="bullet">></span> Strengthened leadership, communication, and stakeholder
+                                coordination skills that complement technical cybersecurity roles.</li>
                         </ul>
                     </div>
                 </div>
@@ -476,12 +542,12 @@
                         <h3 class="form-title">[ SEND_MESSAGE ]</h3>
                         <form class="contact-form" id="contact-form">
                             <div class="form-group">
-                                <input type="text" id="name" name="name" class="form-input"
+                                <input type="text" id="name" name="from_name" class="form-input"
                                     placeholder="Enter your name..." required>
                             </div>
 
                             <div class="form-group">
-                                <input type="email" id="email" name="email" class="form-input"
+                                <input type="email" id="email" name="from_email" class="form-input"
                                     placeholder="your.email@example.com" required>
                             </div>
 
@@ -490,7 +556,9 @@
                                     placeholder="Type your message here..." required></textarea>
                             </div>
 
-                            <button type="submit" class="form-submit">
+                            <button type="submit" class="form-submit g-recaptcha"
+                                data-sitekey="6LcPkjYsAAAAANlkC6hXbdjuGFebXS5XpvrFlEZb"
+                                data-callback="onSubmitWithRecaptcha" data-size="invisible">
                                 <i class="fas fa-paper-plane"></i>
                                 [ SEND_MESSAGE ]
                             </button>
@@ -523,4 +591,3 @@
 </body>
 
 </html>
-```
